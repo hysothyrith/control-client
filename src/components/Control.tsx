@@ -84,7 +84,7 @@ export default function Control() {
       </button>
       {status.isConnecting() && <div>Connecting...</div>}
       {status.isRejected() && <div>There was an error...</div>}
-      {!status.isConnected() && (
+      {status.isConnected() && (
         <div className={styles.actionWrapper}>
           <button onClick={() => sendAction("prev")} className={styles.action}>
             Previous
