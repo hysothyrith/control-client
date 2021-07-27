@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import useConnectionStatus from "../hooks/useConnectionStatus";
+import styles from "../styles/Control.module.css";
 
 export default function Control() {
   const status = useConnectionStatus();
@@ -7,7 +8,6 @@ export default function Control() {
   const [url, setUrl] = useState("");
 
   function toggleConnection() {
-    status.load();
     if (!status.isConnected()) {
       setupWebSocket();
     } else {
@@ -16,6 +16,7 @@ export default function Control() {
   }
 
   function setupWebSocket() {
+    status.load();
     webSocket.current = new WebSocket(url);
     webSocket.current.onopen = () => {
       status.resolve();
@@ -71,16 +72,26 @@ export default function Control() {
         value={url}
         onChange={(e) => setUrl(e.currentTarget.value)}
         onKeyDown={(e) => e.stopPropagation()}
-      ></input>
-      <button onClick={toggleConnection} disabled={url === ""}>
+        disabled={status.isConnected()}
+        className={styles.input}
+      />
+      <button
+        onClick={toggleConnection}
+        disabled={url === ""}
+        className={styles.toggle}
+      >
         {status.isConnected() ? "Disconnect" : "Connect"}
       </button>
       {status.isConnecting() && <div>Connecting...</div>}
       {status.isRejected() && <div>There was an error...</div>}
-      {status.isConnected() && (
-        <div>
-          <button onClick={() => sendAction("prev")}>Previous</button>
-          <button onClick={() => sendAction("next")}>Next</button>
+      {!status.isConnected() && (
+        <div className={styles.actionWrapper}>
+          <button onClick={() => sendAction("prev")} className={styles.action}>
+            Previous
+          </button>
+          <button onClick={() => sendAction("next")} className={styles.action}>
+            Next
+          </button>
         </div>
       )}
     </div>
