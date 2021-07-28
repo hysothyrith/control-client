@@ -4,9 +4,11 @@ import styles from "../styles/Control.module.css";
 
 export default function Control() {
   const [url, setUrl] = useState("");
-  const socket = useWebSocket({ onError: (err) => console.log(err) });
+  const socket = useWebSocket({ onError: (err) => console.error(err) });
 
-  function toggleConnection() {
+  function toggleConnection(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
     if (socket.isOpen) {
       socket.disconnect();
     } else {
@@ -39,7 +41,7 @@ export default function Control() {
   }
 
   return (
-    <div>
+    <form onSubmit={toggleConnection}>
       <label htmlFor="serverUrl">Control Server URL: </label>
       <input
         type="text"
@@ -50,16 +52,16 @@ export default function Control() {
         disabled={socket.isOpen}
         className={styles.input}
       />
-      <button
-        onClick={toggleConnection}
-        disabled={url === ""}
-        className={styles.toggle}
-      >
+      <button disabled={url === ""} className={styles.toggle}>
         {socket.isOpen ? "Disconnect" : "Connect"}
       </button>
       {socket.isOpening && <div>Connecting...</div>}
       {socket.isClosing && <div>Disconnecting...</div>}
-      {socket.isRejected && <div>There was an error...</div>}
+      {socket.error ? (
+        <div>An error occurred...</div>
+      ) : (
+        socket.isClosed && <div>Disconnected from Control Server...</div>
+      )}
       {socket.isOpen && (
         <div className={styles.actionWrapper}>
           <button onClick={() => socket.send("prev")} className={styles.action}>
@@ -70,6 +72,6 @@ export default function Control() {
           </button>
         </div>
       )}
-    </div>
+    </form>
   );
 }
