@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 
-type SocketStatus = "idle" | "opening" | "open" | "closing" | "rejected";
+type SocketStatus = "idle" | "opening" | "open" | "closing" | "closed";
 
 interface UseWebSocketOptions {
   onOpen?: () => void;
@@ -12,15 +12,18 @@ function useWebSocket({ onOpen, onClose, onError }: UseWebSocketOptions) {
   const socket = useRef<WebSocket | undefined>();
   const [url, setUrl] = useState("");
   const [status, setStatus] = useState<SocketStatus>("idle");
+  const [error, setError] = useState<Event | null>();
 
   const isIdle = status === "idle";
   const isOpening = status === "opening";
   const isOpen = status === "open";
   const isClosing = status === "closing";
-  const isRejected = status === "rejected";
+  const isClosed = status === "closed";
 
   function connect(url: string) {
     setStatus("opening");
+    setError(null);
+
     try {
       socket.current = new WebSocket(url);
       socket.current.onopen = () => {
@@ -28,12 +31,18 @@ function useWebSocket({ onOpen, onClose, onError }: UseWebSocketOptions) {
         setUrl(url);
         onOpen && onOpen();
       };
+
       socket.current.onerror = (err) => {
-        setStatus("rejected");
+        setError(err);
         onError && onError(err);
       };
+
+      socket.current.onclose = () => {
+        setStatus("closed");
+        onClose && onClose();
+      };
     } catch (err) {
-      setStatus("rejected");
+      setError(err);
       onError && onError(err);
     }
   }
@@ -51,13 +60,8 @@ function useWebSocket({ onOpen, onClose, onError }: UseWebSocketOptions) {
     }
 
     setStatus("closing");
-    setUrl("");
     socket.current.close();
-
-    socket.current.onclose = () => {
-      setStatus("idle");
-      onClose && onClose();
-    };
+    setUrl("");
   }
 
   return {
@@ -69,7 +73,8 @@ function useWebSocket({ onOpen, onClose, onError }: UseWebSocketOptions) {
     isOpening,
     isOpen,
     isClosing,
-    isRejected,
+    isClosed,
+    error,
   };
 }
 
