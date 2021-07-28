@@ -1,62 +1,37 @@
-import React, { useEffect, useRef, useState } from "react";
-import useConnectionStatus from "../hooks/useConnectionStatus";
+import React, { useEffect, useState } from "react";
+import useWebSocket from "../hooks/useWebSocket";
 import styles from "../styles/Control.module.css";
 
 export default function Control() {
-  const status = useConnectionStatus();
-  const webSocket = useRef<WebSocket | undefined>();
   const [url, setUrl] = useState("");
+  const socket = useWebSocket({ onError: (err) => console.log(err) });
 
   function toggleConnection() {
-    if (!status.isConnected()) {
-      setupWebSocket();
+    if (socket.isOpen) {
+      socket.disconnect();
     } else {
-      disconnectWebSocket();
+      socket.connect(url);
     }
   }
 
-  function setupWebSocket() {
-    status.load();
-    webSocket.current = new WebSocket(url);
-    webSocket.current.onopen = () => {
-      status.resolve();
-    };
-    webSocket.current.onerror = (err) => {
-      status.reject();
-    };
-  }
-
-  function disconnectWebSocket() {
-    webSocket.current.close();
-    webSocket.current.onclose = () => {
-      status.reset();
-    };
-  }
-
-  function sendAction(action: string) {
-    if (!status.isConnected()) return;
-
-    webSocket.current.send(action);
-  }
-
   useEffect(() => {
-    if (status.isConnected()) {
+    if (socket.isOpen) {
       document.addEventListener("keydown", onKeyDown, false);
       return () => {
         document.removeEventListener("keydown", onKeyDown, false);
       };
     }
-  }, [status.isConnected()]);
+  }, [socket.isOpen]);
 
   function onKeyDown(e: KeyboardEvent) {
-    if (!status.isConnected()) return;
+    if (!socket.isOpen) return;
 
     switch (e.key) {
       case "ArrowLeft":
-        sendAction("prev");
+        socket.send("prev");
         break;
       case "ArrowRight":
-        sendAction("next");
+        socket.send("next");
         break;
       default:
         break;
@@ -72,7 +47,7 @@ export default function Control() {
         value={url}
         onChange={(e) => setUrl(e.currentTarget.value)}
         onKeyDown={(e) => e.stopPropagation()}
-        disabled={status.isConnected()}
+        disabled={socket.isOpen}
         className={styles.input}
       />
       <button
@@ -80,16 +55,17 @@ export default function Control() {
         disabled={url === ""}
         className={styles.toggle}
       >
-        {status.isConnected() ? "Disconnect" : "Connect"}
+        {socket.isOpen ? "Disconnect" : "Connect"}
       </button>
-      {status.isConnecting() && <div>Connecting...</div>}
-      {status.isRejected() && <div>There was an error...</div>}
-      {status.isConnected() && (
+      {socket.isOpening && <div>Connecting...</div>}
+      {socket.isClosing && <div>Disconnecting...</div>}
+      {socket.isRejected && <div>There was an error...</div>}
+      {socket.isOpen && (
         <div className={styles.actionWrapper}>
-          <button onClick={() => sendAction("prev")} className={styles.action}>
+          <button onClick={() => socket.send("prev")} className={styles.action}>
             Previous
           </button>
-          <button onClick={() => sendAction("next")} className={styles.action}>
+          <button onClick={() => socket.send("next")} className={styles.action}>
             Next
           </button>
         </div>
