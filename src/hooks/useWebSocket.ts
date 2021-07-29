@@ -43,6 +43,7 @@ function useWebSocket({ onOpen, onClose, onError }: UseWebSocketOptions) {
       };
     } catch (err) {
       setError(err);
+      setStatus("closed");
       onError && onError(err);
     }
   }
