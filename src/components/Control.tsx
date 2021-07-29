@@ -41,27 +41,29 @@ export default function Control() {
   }
 
   return (
-    <form onSubmit={toggleConnection}>
-      <label htmlFor="serverUrl">Control Server URL: </label>
-      <input
-        type="text"
-        id="serverUrl"
-        value={url}
-        onChange={(e) => setUrl(e.currentTarget.value)}
-        onKeyDown={(e) => e.stopPropagation()}
-        disabled={socket.isOpen}
-        className={styles.input}
-      />
-      <button disabled={url === ""} className={styles.toggle}>
-        {socket.isOpen ? "Disconnect" : "Connect"}
-      </button>
-      {socket.isOpening && <div>Connecting...</div>}
-      {socket.isClosing && <div>Disconnecting...</div>}
-      {socket.error ? (
-        <div>An error occurred...</div>
-      ) : (
-        socket.isClosed && <div>Disconnected from Control Server...</div>
-      )}
+    <div>
+      <form onSubmit={toggleConnection}>
+        <label htmlFor="serverUrl">Control Server URL: </label>
+        <input
+          type="text"
+          id="serverUrl"
+          value={url}
+          onChange={(e) => setUrl(e.currentTarget.value)}
+          onKeyDown={(e) => e.stopPropagation()}
+          disabled={socket.isOpen}
+          className={styles.input}
+        />
+        <button disabled={url === ""} className={styles.toggle}>
+          {socket.isOpen ? "Disconnect" : "Connect"}
+        </button>
+        {socket.isOpening && <div>Connecting...</div>}
+        {socket.isClosing && <div>Disconnecting...</div>}
+        {socket.error ? (
+          <div>An error occurred...</div>
+        ) : (
+          socket.isClosed && <div>Disconnected from Control Server...</div>
+        )}
+      </form>
       {socket.isOpen && (
         <div className={styles.actionWrapper}>
           <button onClick={() => socket.send("prev")} className={styles.action}>
@@ -72,6 +74,6 @@ export default function Control() {
           </button>
         </div>
       )}
-    </form>
+    </div>
   );
 }
