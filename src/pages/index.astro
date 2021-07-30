@@ -16,13 +16,25 @@ import Control from "../components/Control.tsx"
             display: flex;
             flex-direction: column;
             gap: 1em;
-            /* max-width: min(100%, 80ch); */
+            max-width: min(100%, 80ch);
+        }
+        .brand {
+          align-self: flex-start;
+          display: flex;
+          align-items: flex-start;
+        }
+
+        .brand h1 {
+          font-size: 1.8rem;
         }
     </style>
 </head>
 <body>
     <header>
+    <div class="brand">
+      <img src="/assets/logo.svg" alt="Control logo">
       <h1>Control</h1>
+      </div>
     </header>
     <main>
       <Control client:load />
