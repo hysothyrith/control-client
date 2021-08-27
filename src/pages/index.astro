@@ -3,42 +3,21 @@ import Control from "../components/Control.tsx"
 ---
 
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Control</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="stylesheet" href="/style/global.css">
-    <link rel="stylesheet" href="/style/home.css">
-
-    <style>
-        header {
-            display: flex;
-            flex-direction: column;
-            gap: 1em;
-            max-width: min(100%, 80ch);
-        }
-        .brand {
-          align-self: flex-start;
-          display: flex;
-          align-items: flex-start;
-        }
-
-        .brand h1 {
-          font-size: 1.8rem;
-        }
-    </style>
-</head>
-<body>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/style/global.css" />
+    <link rel="stylesheet" href="/style/home.css" />
+  </head>
+  <body>
     <header>
-    <div class="brand">
-      <img src="/assets/logo.svg" alt="Control logo">
-      <h1>Control</h1>
-      </div>
+        <img src="/assets/logo.svg" height="30rem" alt="Control logo" />
     </header>
     <main>
       <Control client:load />
     </main>
     <footer>&copy;&nbsp;2021 Hy Sothyrith</footer>
-</body>
+  </body>
 </html>

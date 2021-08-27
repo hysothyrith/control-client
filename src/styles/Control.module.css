@@ -1,17 +1,58 @@
+.wrapper {
+  max-width: 768px;
+  flex-grow: 1;
+}
+
 .actionWrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-top: 24px;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
 }
 
-.action {
-  padding: 2rem;
+.action,
+.actionSecondary {
+  font-size: 1.6rem;
+  color: var(--color-bg);
+  background-color: var(--color-primary);
+  border: none;
+  transition: transform 60ms ease, box-shadow 60ms ease,
+    background-color 100ms ease, border-color 100ms ease;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  border-radius: 8px;
+  font-weight: 500;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
-.input {
-  padding: 8px;
+.action:active,
+.actionSecondary:active {
+  transform: translateY(2px);
+  box-shadow: rgba(0, 0, 0, 0.25) 0 4px 4px;
+  background-color: var(--color-primary-m1);
+  border-color: var(--color-primary-m1);
 }
 
-.toggle {
-  padding: 8px;
+.actionSecondary {
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  padding: 1.2rem 2rem;
+}
+
+.actionSecondary:active {
+  background-color: var(--color-bg-m1);
+}
+
+form {
+  margin: var(--space-md) 0;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.inputWrapper input {
+  flex-grow: 1;
 }

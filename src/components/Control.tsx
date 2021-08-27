@@ -41,21 +41,24 @@ export default function Control() {
   }
 
   return (
-    <div>
-      <form onSubmit={toggleConnection}>
-        <label htmlFor="serverUrl">Control Server URL: </label>
-        <input
-          type="text"
-          id="serverUrl"
-          value={url}
-          onChange={(e) => setUrl(e.currentTarget.value)}
-          onKeyDown={(e) => e.stopPropagation()}
-          disabled={socket.isOpen}
-          className={styles.input}
-        />
-        <button disabled={url === ""} className={styles.toggle}>
-          {socket.isOpen ? "Disconnect" : "Connect"}
-        </button>
+    <div className={styles.wrapper}>
+      <form onSubmit={toggleConnection} className={styles.form}>
+        <label htmlFor="serverUrl" className={"mb-xs"}>
+          Control Server URL
+        </label>
+        <div className={styles.inputWrapper}>
+          <input
+            type="text"
+            id="serverUrl"
+            value={url}
+            onChange={(e) => setUrl(e.currentTarget.value)}
+            onKeyDown={(e) => e.stopPropagation()}
+            disabled={socket.isOpen}
+          />
+          <button disabled={url === ""} className={styles.toggle}>
+            {socket.isOpen ? "Disconnect" : "Connect"}
+          </button>
+        </div>
         {socket.isOpening && <div>Connecting...</div>}
         {socket.isClosing && <div>Disconnecting...</div>}
         {socket.error ? (
@@ -66,7 +69,10 @@ export default function Control() {
       </form>
       {socket.isOpen && (
         <div className={styles.actionWrapper}>
-          <button onClick={() => socket.send("prev")} className={styles.action}>
+          <button
+            onClick={() => socket.send("prev")}
+            className={styles.actionSecondary}
+          >
             Previous
           </button>
           <button onClick={() => socket.send("next")} className={styles.action}>
